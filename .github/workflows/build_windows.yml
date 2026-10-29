@@ -1,6 +1,9 @@
 name: Build Windows
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - dev
 
 jobs:
   build:
@@ -16,7 +19,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.10
-          check-latest: true
 
       - name: Setup Visual Studio Environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -26,17 +28,13 @@ jobs:
       - name: Prepare AyuGram Libraries
         shell: pwsh
         run: |
-           = (Get-Command python).Source
-          Write-Host Active Python: 
-          &  -V
-          &  Telegram/build/prepare/prepare.py
+          python Telegram/build/prepare/prepare.py
 
       - name: Configure Telegram
         shell: pwsh
         run: |
-           = (Get-Command python).Source
           cd Telegram
-          &  configure.py -D TDESKTOP_API_ID=2040 -D TDESKTOP_API_HASH=b18441a1ff607e10a989891a5462e627
+          python configure.py -D TDESKTOP_API_ID=2040 -D TDESKTOP_API_HASH=b18441a1ff607e10a989891a5462e627
 
       - name: Build AyuGram
         shell: pwsh
