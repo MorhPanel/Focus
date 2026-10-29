@@ -12,10 +12,11 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Setup Python
+      - name: Setup Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: 3.10
+          check-latest: true
 
       - name: Setup Visual Studio Environment
         uses: ilammy/msvc-dev-cmd@v1
@@ -23,15 +24,22 @@ jobs:
           arch: x64
 
       - name: Prepare AyuGram Libraries
+        shell: pwsh
         run: |
-          Telegram\build\prepare\win.bat
+           = (Get-Command python).Source
+          Write-Host Active Python: 
+          &  -V
+          &  Telegram/build/prepare/prepare.py
 
       - name: Configure Telegram
+        shell: pwsh
         run: |
+           = (Get-Command python).Source
           cd Telegram
-          cmd.exe /c configure.bat x64 -D TDESKTOP_API_ID=2040 -D TDESKTOP_API_HASH=b18441a1ff607e10a989891a5462e627
+          &  configure.py -D TDESKTOP_API_ID=2040 -D TDESKTOP_API_HASH=b18441a1ff607e10a989891a5462e627
 
       - name: Build AyuGram
+        shell: pwsh
         run: |
           cmake --build out --config Release --target Telegram
 
