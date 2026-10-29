@@ -17,39 +17,30 @@ jobs:
         with:
           python-version: 3.10
 
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: 6.5.3
-          host: windows
-          target: desktop
-          arch: win64_msvc2019_64
-
-      - name: Setup Ninja
-        uses: ashutoshvarma/setup-ninja@master
-        with:
-          version: 1.11.1
-
-      - name: Setup Visual Studio
+      - name: Setup Visual Studio Environment
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
 
-      - name: Install vcpkg dependencies
-        shell: pwsh
+      - name: Prepare AyuGram Libraries
         run: |
-          vcpkg install ada:x64-windows
+          Telegram\build\prepare\win.bat
 
-      - name: Configure and Build
-        shell: pwsh
+      - name: Configure Telegram
         run: |
-          mkdir build -Force
-          cd build
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=:Qt6_DIR;C:/vcpkg/installed/x64-windows -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
-          cmake --build . --config Release --target Telegram
+          cd Telegram
+          cmd.exe /c configure.bat x64 -D TDESKTOP_API_ID=2040 -D TDESKTOP_API_HASH=b18441a1ff607e10a989891a5462e627
+
+      - name: Build AyuGram
+        run: |
+          cmake --build out --config Release --target Telegram
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Focus-Windows-x64
-          path: build/bin/Telegram.exe
+          name: AyuGram-Focus-Windows-x64
+          path: |
+            out/Release/AyuGram.exe
+            out/bin/Release/Telegram.exe
+            out/Release/Telegram.exe
+            out/bin/Telegram.exe
