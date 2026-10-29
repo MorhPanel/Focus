@@ -35,12 +35,19 @@ jobs:
         with:
           arch: x64
 
+      - name: Install vcpkg dependencies
+        shell: pwsh
+        run: |
+          vcpkg install ada:x64-windows
+
       - name: Configure and Build
         shell: pwsh
         run: |
           mkdir build -Force
           cd build
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=:Qt6_DIR ..
+          cmake -G Ninja 
+            -DCMAKE_PREFIX_PATH=:Qt6_DIR;C:/vcpkg/installed/x64-windows 
+            ..
           cmake --build . --config Release --target Telegram
 
       - name: Upload Artifact
