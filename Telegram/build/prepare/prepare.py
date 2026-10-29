@@ -446,7 +446,7 @@ if customRunCommand:
         else:
             prompt = '(prepare) %~ %# '
             with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp_zshrc:
-                tmp_zshrc.write(f'export PS1="{prompt}"\n')
+                tmp_zshrc.write('export PS1="{}"\n'.format(prompt))
                 tmp_zshrc_path = tmp_zshrc.name
             subprocess.run(['zsh', '--rcs', tmp_zshrc_path], shell=True, env=modifiedEnv)
             os.remove(tmp_zshrc_path)
